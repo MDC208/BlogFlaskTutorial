@@ -30,3 +30,4 @@ erDiagram
 | /<int:id>/delete | Post |
 | / | Get |
 | /hello | Get |
+| /static/<path:filename> | Get |
