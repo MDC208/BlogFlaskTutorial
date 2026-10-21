@@ -1,7 +1,7 @@
 # Model de dades
 
 ## Model Entitat Relació E/R
-´´´mermaid
+'''mermaid
 erDiagram
     User ||--o{ Post : id
     User {
@@ -14,5 +14,5 @@ erDiagram
         string title
         string body
     }
-```
+'''
 
