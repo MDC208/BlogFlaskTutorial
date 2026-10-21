@@ -28,3 +28,5 @@ erDiagram
 | /<int:id>/update | Get |
 | /<int:id>/update | Post |
 | /<int:id>/delete | Post |
+| / | Get |
+| /hello | Get |
