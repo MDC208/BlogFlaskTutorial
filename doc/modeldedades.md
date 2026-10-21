@@ -1,6 +1,7 @@
 # Model de dades
 
 ## Model Entitat Relació E/R
+
 '''mermaid
 erDiagram
     User ||--o{ Post : id
