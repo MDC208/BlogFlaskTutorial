@@ -8,7 +8,6 @@ erDiagram
         string username
         string password
     }
-    Post 
     Post {
         date created
         string title
