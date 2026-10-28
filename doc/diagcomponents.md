@@ -7,7 +7,7 @@ Components: db, _init_, auth, blog
 ## db
 Descripció: funcions d'accés a BBDD
 Mètodes:
-- getdb(): Retorna connexió, metode que retorna la connexió a BBDD
+- get_db(): Retorna connexió, metode que retorna la connexió a BBDD
 - close_db(): Tanca la connexió a BBDD
 - init_db(): Elimina les dades existents i crea noves taules
 - init_db_command(): Fa un crit a init_db
@@ -20,7 +20,7 @@ Mètodes:
 - get_post(): Agafa una publicació i al autor mitjançant el seu ID
 - create(): Crea una nova publicació pel usuari actual
 - update(): Actualitza una publicació si l'usuari es l'autor
-- deleate(): Elimina una clase
+- delete(): Elimina una clase
 
 ## auth
 Descripció: Funcions d'inici de sessió
@@ -35,4 +35,36 @@ Mètodes:
 Descripció: Funcions per a inicialitzar la aplicació
 Mètodes:
 - create_app(): Crea i configura la aplicació flask
+
+```mermaid
+classDiagram
+classDiagram
+  class DB {
+    +get_db()
+    +close_db()
+    +init_db()
+    +init_db_command()
+    +init_app()
+  }
+  class Blog {
+    +index()
+    +get_post()
+    +create()
+    +update()
+    +delete()
+  }
+  class Auth {
+    +login_required()
+    +load_logged_in_user()
+    +register()
+    +login()
+    +logout()
+  }
+  class _init_ {
+    +create_app()
+  }
+  _init_ --> DB
+  _init_ --> Blog
+  _init_ --> Auth
+```
 
