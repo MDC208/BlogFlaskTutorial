@@ -38,7 +38,6 @@ Mètodes:
 
 ```mermaid
 classDiagram
-classDiagram
   class DB {
     +get_db()
     +close_db()
