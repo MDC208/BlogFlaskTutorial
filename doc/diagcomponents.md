@@ -67,7 +67,8 @@ classDiagram
   _init_ --> Auth
 ```
 
-# Diagrama de seqüencia 
+# Diagrames de seqüencia 
+## Diagrama init database
 ```mermaid
 sequenceDiagram
     autonumber
@@ -110,4 +111,80 @@ sequenceDiagram
     CLI->>App: Surt de l'app context
     App->>DB: teardown_appcontext → close_db()
     DB->>SQL: db.close()
+```
+
+## Diagrama de arrencada de la app
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Usuario (terminal)
+    participant CLI as Flask CLI<br/>(run_command)
+    participant Init as flaskr/__init__.py<br/>create_app()
+    participant App as Flask app
+    participant DB as flaskr/db.py
+    participant Auth as flaskr/auth.py
+    participant Blog as flaskr/blog.py
+    participant Srv as Servidor de desarrollo
+
+    U->>CLI: flask --app flaskr run --debug
+    CLI->>CLI: Parsea --app flaskr y --debug
+    CLI->>Init: Importa el paquete flaskr y localiza create_app()
+    Init->>App: Flask(__name__, instance_relative_config=True)
+    Init->>App: config.from_mapping(SECRET_KEY, DATABASE)
+    Init->>App: config.from_pyfile("config.py", silent=True)
+    Init->>App: os.makedirs(app.instance_path)
+    Init->>DB: db.init_app(app)
+    DB->>App: teardown_appcontext(close_db)
+    DB->>App: cli.add_command(init_db_command)
+    Init->>Auth: import auth
+    Init->>App: register_blueprint(auth.bp)
+    Auth->>App: before_app_request(load_logged_in_user)
+    Init->>Blog: import blog
+    Init->>App: register_blueprint(blog.bp)
+    Init->>App: add_url_rule("/", endpoint="index")
+    Init-->>CLI: devuelve app
+    CLI->>Srv: Inicia el servidor (127.0.0.1:5000)
+    Srv-->>U: Running on http://127.0.0.1:5000
+```
+
+## Diagrama de la petició get / login
+```mermaid
+sequenceDiagram
+    autonumber
+    actor B as Navegador
+    participant Srv as Servidor de desarrollo
+    participant App as Flask app
+    participant Auth as flaskr/auth.py
+    participant Blog as flaskr/blog.py
+    participant DB as flaskr/db.py
+    participant SQL as SQLite<br/>(instance/flaskr.sqlite)
+
+    B->>Srv: GET /
+    Srv->>App: Llamada WSGI (app.wsgi_app)
+    App->>App: Crea app context y request context
+    App->>Auth: before_app_request → load_logged_in_user()
+    Auth->>App: Lee session.get("user_id")
+    alt No hay user_id en la sesión
+        Auth->>App: g.user = None
+    else Hay user_id
+        Auth->>DB: get_db()
+        DB->>SQL: sqlite3.connect(DATABASE)
+        SQL-->>DB: conexión
+        DB-->>Auth: db (g.db)
+        Auth->>SQL: SELECT * FROM user WHERE id = ?
+        SQL-->>Auth: usuario
+        Auth->>App: g.user = usuario
+    end
+    App->>Blog: Resuelve "/" → blog.index()
+    Blog->>DB: get_db()
+    DB-->>Blog: db (g.db)
+    Blog->>SQL: SELECT p.id, title, body, created, author_id, username<br/>FROM post p JOIN user u ... ORDER BY created DESC
+    SQL-->>Blog: lista de posts
+    Blog->>App: render_template("blog/index.html", posts=posts)
+    App-->>Blog: HTML renderizado (base.html + index.html)
+    Blog-->>App: respuesta
+    App->>DB: teardown_appcontext → close_db()
+    DB->>SQL: db.close()
+    App-->>Srv: Respuesta 200 OK
+    Srv-->>B: HTML
 ```
