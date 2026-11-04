@@ -147,7 +147,7 @@ sequenceDiagram
     Srv-->>U: Running on http://127.0.0.1:5000
 ```
 
-## Diagrama de la petició get / login
+## Diagrama de la petició get
 ```mermaid
 sequenceDiagram
     autonumber
@@ -187,4 +187,32 @@ sequenceDiagram
     DB->>SQL: db.close()
     App-->>Srv: Resposta 200 OK
     Srv-->>B: HTML
+```
+## Diagrama de login
+```mermaid
+sequenceDiagram
+    autonumber
+    actor B as Navegador
+    participant Auth as flaskr/auth.py<br/>login()
+    participant DB as SQLite
+    participant S as session<br/>(cookie firmada)
+
+    B->>Auth: POST /auth/login (username, password)
+    Auth->>DB: SELECT * FROM user WHERE username = ?
+    DB-->>Auth: fila del usuario (o None)
+
+    alt user is None
+        Auth->>Auth: error = "Incorrect username."
+    else check_password_hash falla
+        Auth->>Auth: error = "Incorrect password."
+    end
+
+    alt Credenciales correctas
+        Auth->>S: session.clear()
+        Auth->>S: session["user_id"] = user["id"]
+        Auth-->>B: 302 redirect a index · Set-Cookie: session=...
+    else Hay error
+        Auth->>S: flash(error)
+        Auth-->>B: 200 · auth/login.html con el mensaje de error
+    end
 ```
