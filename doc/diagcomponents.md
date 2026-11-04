@@ -117,18 +117,18 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     autonumber
-    actor U as Usuario (terminal)
+    actor U as Usuari (terminal)
     participant CLI as Flask CLI<br/>(run_command)
     participant Init as flaskr/__init__.py<br/>create_app()
     participant App as Flask app
     participant DB as flaskr/db.py
     participant Auth as flaskr/auth.py
     participant Blog as flaskr/blog.py
-    participant Srv as Servidor de desarrollo
+    participant Srv as Servidor de desenvolupament
 
     U->>CLI: flask --app flaskr run --debug
-    CLI->>CLI: Parsea --app flaskr y --debug
-    CLI->>Init: Importa el paquete flaskr y localiza create_app()
+    CLI->>CLI: Parseja --app flaskr i --debug
+    CLI->>Init: Importa el paquet flaskr i localitza create_app()
     Init->>App: Flask(__name__, instance_relative_config=True)
     Init->>App: config.from_mapping(SECRET_KEY, DATABASE)
     Init->>App: config.from_pyfile("config.py", silent=True)
@@ -142,7 +142,7 @@ sequenceDiagram
     Init->>Blog: import blog
     Init->>App: register_blueprint(blog.bp)
     Init->>App: add_url_rule("/", endpoint="index")
-    Init-->>CLI: devuelve app
+    Init-->>CLI: retorna app
     CLI->>Srv: Inicia el servidor (127.0.0.1:5000)
     Srv-->>U: Running on http://127.0.0.1:5000
 ```
@@ -152,7 +152,7 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     actor B as Navegador
-    participant Srv as Servidor de desarrollo
+    participant Srv as Servidor de desenvolupament
     participant App as Flask app
     participant Auth as flaskr/auth.py
     participant Blog as flaskr/blog.py
@@ -160,31 +160,31 @@ sequenceDiagram
     participant SQL as SQLite<br/>(instance/flaskr.sqlite)
 
     B->>Srv: GET /
-    Srv->>App: Llamada WSGI (app.wsgi_app)
-    App->>App: Crea app context y request context
+    Srv->>App: Crida WSGI (app.wsgi_app)
+    App->>App: Crea app context i request context
     App->>Auth: before_app_request → load_logged_in_user()
-    Auth->>App: Lee session.get("user_id")
-    alt No hay user_id en la sesión
+    Auth->>App: Llegeix session.get("user_id")
+    alt No hi ha user_id a la sessió
         Auth->>App: g.user = None
-    else Hay user_id
+    else Hi ha user_id
         Auth->>DB: get_db()
         DB->>SQL: sqlite3.connect(DATABASE)
-        SQL-->>DB: conexión
+        SQL-->>DB: connexió
         DB-->>Auth: db (g.db)
         Auth->>SQL: SELECT * FROM user WHERE id = ?
-        SQL-->>Auth: usuario
-        Auth->>App: g.user = usuario
+        SQL-->>Auth: usuari
+        Auth->>App: g.user = usuari
     end
-    App->>Blog: Resuelve "/" → blog.index()
+    App->>Blog: Resol "/" → blog.index()
     Blog->>DB: get_db()
     DB-->>Blog: db (g.db)
     Blog->>SQL: SELECT p.id, title, body, created, author_id, username<br/>FROM post p JOIN user u ... ORDER BY created DESC
-    SQL-->>Blog: lista de posts
+    SQL-->>Blog: llista de posts
     Blog->>App: render_template("blog/index.html", posts=posts)
-    App-->>Blog: HTML renderizado (base.html + index.html)
-    Blog-->>App: respuesta
+    App-->>Blog: HTML renderitzat (base.html + index.html)
+    Blog-->>App: resposta
     App->>DB: teardown_appcontext → close_db()
     DB->>SQL: db.close()
-    App-->>Srv: Respuesta 200 OK
+    App-->>Srv: Resposta 200 OK
     Srv-->>B: HTML
 ```
