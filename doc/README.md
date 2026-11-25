@@ -1,5 +1,5 @@
 # Documentació Projecte BlogFlask
 
-[Model de dades](modeldedades.md) 
-
-[Diagrama de Classes/Components](diagcomponents.md)
+- [Model de dades](modeldedades.md) 
+- [Diagrama de Classes/Components](diagcomponents.md)
+- [Test app](test.md)
