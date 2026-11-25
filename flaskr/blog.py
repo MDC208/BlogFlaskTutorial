@@ -66,7 +66,6 @@ def create():
         title = request.form["title"]
         body = request.form["body"]
         category = request.form["category"]
-        print("Category:", category)  # Debugging line to check the value of category
         error = None
 
         if not title:
