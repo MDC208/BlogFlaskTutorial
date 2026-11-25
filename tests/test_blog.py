@@ -52,7 +52,6 @@ def test_create(client, auth, app):
         db = get_db()
         count = db.execute("SELECT COUNT(id) FROM post").fetchone()[0]
         assert count == 2
-        assert 1 == 2
 
 
 def test_update(client, auth, app):
