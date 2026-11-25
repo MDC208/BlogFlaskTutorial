@@ -10,3 +10,17 @@ Instal·lar la llibreria pytest dins del nostre .venv
 ```bash
 $ pip install pytest
 ```
+
+# Execució dels tests
+
+Totes les oredes
+
+Dins el .venv
+```bash
+$ pip install pytest
+$ pip install coverage
+$ coverage run -m pytest
+$ coverage report
+```
+
+- [Tests amb Coverage HTML](../htmlcov/index.html)
